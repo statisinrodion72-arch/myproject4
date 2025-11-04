@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8" />
+<title>Гра «Однорукий бандит»</title>
+<style>
+  #gameContainer {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+  }
+  .column {
+    width: 100px;
+    height: 300px;
+    margin: 0 10px;
+    border: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+  }
+  img {
+    width: 80px;
+  }
+  button {
+    margin: 20px;
+    padding: 10px;
+  }
+</style>
+</head>
+<body>
+<h1>Гра "Однорукий бандит"</h1>
+<div id="gameContainer">
+  <div class="column" id="col1"></div>
+  <div class="column" id="col2"></div>
+  <div class="column" id="col3"></div>
+</div>
+<button id="startBtn">Старт</button>
+<div id="result"></div>
+
+<script>
+  var images = [
+    'https://copilot.microsoft.com/th/id/BCO.3b4b1abd-8d95-4959-9bc4-1c5d69e11bbd.png',
+    'https://copilot.microsoft.com/th/id/BCO.6b5b04ac-6556-402b-8d5f-30ec0726456a.png',
+    'https://copilot.microsoft.com/th/id/BCO.2a6fc902-38e5-4c0f-9b60-2dc099edbac8.png',
+    'https://copilot.microsoft.com/th/id/BCO.9e3e9a8d-efde-44ba-87d7-9a8bd2126be5.png',
+    'https://copilot.microsoft.com/th/id/BCO.8e7b9f77-9ce5-4c4e-a34e-67f14c9b051f.png'
+  ];
+
+  var col1 = document.getElementById('col1');
+  var col2 = document.getElementById('col2');
+  var col3 = document.getElementById('col3');
+  var startBtn = document.getElementById('startBtn');
+  var resultDiv = document.getElementById('result');
+
+  var counters = 0;
+  var historyResults = [];
+
+  startBtn.onclick = function() {
+    var name = prompt("Введіть ваше ім'я:");
+    if (!name) { name = "Гравець"; }
+    spin();
+  }
+
+  function spin() {
+    col1.innerHTML = "";
+    col2.innerHTML = "";
+    col3.innerHTML = "";
+
+    var shuffled = shuffleArray(images.slice()); 
+    var col1Arr = shuffled.slice(0,3);
+    var col2Arr = shuffleArray(images.slice()); 
+    var col3Arr = shuffleArray(images.slice()); 
+
+    for (var i=0; i<3; i++) {
+      var img1 = document.createElement('img');
+      img1.src = col1Arr[i];
+      col1.appendChild(img1);
+
+      var img2 = document.createElement('img');
+      img2.src = col2Arr[i];
+      col2.appendChild(img2);
+
+      var img3 = document.createElement('img');
+      img3.src = col3Arr[i];
+      col3.appendChild(img3);
+    }
+
+    counters++;
+    var res1 = col1.children[0].src;
+    var res2 = col2.children[0].src;
+    var res3 = col3.children[0].src;
+    historyResults.push([res1,res2,res3]);
+
+    if (historyResults.length >= 3) {
+      var last3 = historyResults.slice(-3);
+      var checkWin = true;
+      var firstRes = last3[0][0];
+      for (var i=0; i<last3.length; i++) {
+        if (!(last3[i][0] === firstRes && last3[i][1] === firstRes && last3[i][2] === firstRes)) {
+          checkWin = false;
+        }
+      }
+      if (checkWin) {
+        resultDiv.innerHTML = "Вітаю! Ви виграли!";
+      } else {
+        resultDiv.innerHTML = "Ще раз спробуйте!";
+      }
+    } else {
+      resultDiv.innerHTML = "Обертання...";
+    }
+  }
+
+  function shuffleArray(array) {
+    for (var i=array.length-1; i>0; i--) {
+      var j = Math.floor(Math.random()*(i+1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array;
+  }
+</script>
+</body>
+</html>
